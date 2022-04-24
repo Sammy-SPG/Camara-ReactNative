@@ -1,10 +1,10 @@
 import { Camera } from 'expo-camera';
-import React, { useState, useRef, useEffect} from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { MaterialIcons } from '@expo/vector-icons';
+import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 
-export default function CameraComponente() {
+export default function CameraComponente({ route }) {
     const camareReference = useRef();
     const [type, setType] = useState(Camera.Constants.Type.back);
     const [hasPermission, setHasPermission] = useState(null);
@@ -22,52 +22,62 @@ export default function CameraComponente() {
         return <View />;
     }
     if (hasPermission === false) {
-        return <Text>No access to camera</Text>;
+        return <Text>No hay acceso a la camara</Text>;
     }
 
 
-    const tomarFoto = async ()=>{
-        console.log('funciona');
-        if(camareReference.current){
-            const options = {quality: 0.7, base64: true}
+    const tomarFoto = async () => {
+        if (camareReference.current) {
+            const options = { quality: 0.7, base64: true }
             let photo = await camareReference.current.takePictureAsync(options);
-            const {uri, base64} = photo;
-            if(base64){
+            const { uri, base64 } = photo;
+            if (base64) {
                 await camareReference.current.pausePreview();
                 setVistaPrevia(true);
                 setUri(uri);
-            }else{
+            } else {
                 alert('No se tomo');
             }
-        }else{
+        } else {
             console.log('No referencia a la camara');
         }
     }
 
+    const cancelPreview = async () => {
+        await camareReference.current.resumePreview();
+        setVistaPrevia(false);
+    };
+
     return (
-        <Camera type={type} ref = {camareReference} style={styles.camera}>
-            {!vistaPrevia ?
-                <View style = {styles.container}>
+        <Camera type={type} ref={camareReference} style={styles.camera}>
+            <TouchableOpacity
+                onPress={() => {
+                    setType(
+                        type === Camera.Constants.Type.back
+                            ? Camera.Constants.Type.front
+                            : Camera.Constants.Type.back
+                    );
+                }}>
+                <Ionicons name="md-camera-reverse-outline" size={50} color="#eee" />
+            </TouchableOpacity>
+            {!vistaPrevia ? //si es falso
+                <View style={styles.container}>
                     <TouchableOpacity
-                        onPress={() => {
-                            setType(
-                                type === Camera.Constants.Type.back
-                                    ? Camera.Constants.Type.front
-                                    : Camera.Constants.Type.back
-                            );
-                        }}>
-                        <Ionicons name="md-camera-reverse-outline" size={50} color="#eee" />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress = {()=> tomarFoto()}
+                        onPress={() => tomarFoto()}
                     >
                         <MaterialIcons name="photo-camera" size={50} color="#eee" />
                     </TouchableOpacity>
                 </View>
-                :
-                <View style = {styles.viewImage}>
-                    <Image source = {{uri: uri}} style = {styles.logo}/>
-                    <Text>Tu IMC: 20</Text>
+                : //si es verdadero
+                <View style={styles.viewImage}>
+                    <TouchableOpacity
+                                onPress={()=>cancelPreview()}
+                                activeOpacity={0.7}
+                            >
+                                <AntDesign name="closesquare" size={30} color="#292929" style = {{marginBottom: 5}}/>
+                            </TouchableOpacity>
+                    <Image source={{ uri: uri }} style={styles.logo} />
+                    <Text style={{textAlign: 'center', margin: 15}}>Tu IMC es: {route.params.IMC}</Text>
                 </View>}
         </Camera>
     );
@@ -78,6 +88,7 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
         height: '100%',
+        padding: 10
     },
     container: {
         flex: 1,
@@ -95,8 +106,8 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     logo: {
-        width: 305,
-        height: 159,
-        marginBottom: 20,
+        width: '100%',
+        height: '50%',
+        borderRadius: 15,
     },
 });
