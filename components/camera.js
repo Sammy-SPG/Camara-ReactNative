@@ -71,13 +71,13 @@ export default function CameraComponente({ route }) {
                 : //si es verdadero
                 <View style={styles.viewImage}>
                     <TouchableOpacity
-                                onPress={()=>cancelPreview()}
-                                activeOpacity={0.7}
-                            >
-                                <AntDesign name="closesquare" size={30} color="#292929" style = {{marginBottom: 5}}/>
-                            </TouchableOpacity>
+                        onPress={() => cancelPreview()}
+                        activeOpacity={0.7}
+                    >
+                        <AntDesign name="closesquare" size={30} color="#292929" style={{ marginBottom: 5 }} />
+                    </TouchableOpacity>
                     <Image source={{ uri: uri }} style={styles.logo} />
-                    <Text style={{textAlign: 'center', margin: 15}}>Tu IMC es: {route.params.IMC}</Text>
+                    <Text style={{ textAlign: 'center', margin: 15 }}>Tu IMC es: {route.params.IMC}</Text>
                 </View>}
         </Camera>
     );

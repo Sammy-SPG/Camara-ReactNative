@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-nativ
 import AppLoading from 'expo-app-loading';
 import { useFonts, Inter_900Black } from '@expo-google-fonts/inter';
 
-export default function Home({ navigation }) {
+export default function Home({ navigation, route }) {
 
     let [fontsLoaded] = useFonts({
         Inter_900Black,
@@ -14,11 +14,12 @@ export default function Home({ navigation }) {
 
     if (!fontsLoaded) {
         return <AppLoading />;
-      }
+    }
 
     return (
-        <View style={styles.container}>
+        <View style={styles.container}>                     
             <Text style={styles.title}>Calcular IMC</Text>
+            <Text style={{position: 'absolute', top: 0, left: 25}}>User: {route.params.user.name}</Text>
             <View style={{ justifyContent: 'center', alignItems: 'center', position: 'relative', width: '100%' }}>
                 <TextInput placeholder="Ingresa el peso" style={styles.inputText} keyboardType="numeric" onChangeText={(value) => setPeso(parseFloat(value))} />
                 <TextInput placeholder="Ingresa la altura" style={styles.inputText} keyboardType="numeric" onChangeText={(value) => setAltura(parseFloat(value))} />
